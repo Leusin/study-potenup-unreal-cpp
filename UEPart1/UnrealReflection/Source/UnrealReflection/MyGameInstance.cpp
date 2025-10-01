@@ -25,7 +25,7 @@ void UMyGameInstance::Init()
 	check(ClassRuntime == ClassCompile);
 	// 2) ensure
 	ensure(ClassRuntime == ClassCompile);
-	ensureMsgf(ClassRuntime != ClassCompile, TEXT("일부러 발생시킨 오류"));
+	ensureMsgf(ClassRuntime == ClassCompile, TEXT("일부러 발생시킨 오류"));
 
 	// 두 타입 비교 
 	FString Result = (ClassRuntime == ClassCompile) ? TEXT("같음") : TEXT("다름");
