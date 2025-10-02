@@ -90,10 +90,6 @@ void UMyGameInstance::Init()
 	Student->DoLesson();
 	
 	// 리플렉션을 활용한 함수 간접 호출
-	/*
-		가볍지 않지고 실제 게임 로직에서 사용할 일이 없지만, 
-		외부 파일 파싱해 매핑된 함수 호출하는 방식으로 활용할 수 있다.
-	*/ 
 	UFunction* DoLessionFuction = Teacher->GetClass()->FindFunctionByName(TEXT("DoLesson"));
 
 	if (DoLessionFuction)

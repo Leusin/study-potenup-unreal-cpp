@@ -86,28 +86,6 @@ void UMyGameInstance::Init()
 
 	UE_LOG(LogTemp, Log, TEXT("====================================="))
 
-	// 함수 호출
-	Student->DoLesson();
-	
-	// 리플렉션을 활용한 함수 간접 호출
-	/*
-		가볍지 않지고 실제 게임 로직에서 사용할 일이 없지만, 
-		외부 파일 파싱해 매핑된 함수 호출하는 방식으로 활용할 수 있다.
-	*/ 
-	UFunction* DoLessionFuction = Teacher->GetClass()->FindFunctionByName(TEXT("DoLesson"));
-
-	if (DoLessionFuction)
-	{
-		Teacher->ProcessEvent(DoLessionFuction, nullptr);
-	}
-
-	/// 출력 결과
-	/*
-	LogTemp: 학생1님이 수업에 참여합니다.
-	LogTemp: 1학년 1번 학생1님이 수업을 듣습니다.
-	LogTemp: 존카멕님이 수업에 참여합니다.
-	LogTemp: 14년차 선생님이 존카멕님이 수업을 진행합니다.
-	*/
 
 	UE_LOG(LogTemp, Log, TEXT("====================================="))
 }

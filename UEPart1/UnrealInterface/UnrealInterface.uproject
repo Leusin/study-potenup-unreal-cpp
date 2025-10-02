@@ -5,13 +5,9 @@
 	"Description": "",
 	"Modules": [
 		{
-			"Name": "UnrealReflection",
+			"Name": "UnrealInterface",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"CoreUObject"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
