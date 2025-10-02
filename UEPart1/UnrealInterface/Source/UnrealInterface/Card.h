@@ -3,17 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Person.h"
-#include "Staff.generated.h"
+#include "UObject/NoExportTypes.h"
+#include "Card.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALINTERFACE_API UStaff : public UPerson
+class UNREALINTERFACE_API UCard : public UObject
 {
 	GENERATED_BODY()
 	
-public:
-	UStaff();
 };

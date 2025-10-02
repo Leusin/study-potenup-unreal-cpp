@@ -4,11 +4,11 @@
 #include "MyGameInstance.h"
 #include "Student.h"
 #include "Teacher.h"
+#include "Staff.h"
 
 UMyGameInstance::UMyGameInstance()
 {
-	// 기본 값은 CDO 라는 템플릿 객체에 저장
-	SchoolName = TEXT("기본 학교 이름");
+	SchoolName = TEXT("기본 학교");
 }
 
 void UMyGameInstance::Init()
@@ -17,75 +17,23 @@ void UMyGameInstance::Init()
 
 	UE_LOG(LogTemp, Log, TEXT("====================================="));
 
-	// 클래스 정보
-	// 런타임 클래스 정보는 GetClass() 함수 사용
-	UClass* ClassRuntime = GetClass();
-	UClass* ClassCompile = UMyGameInstance::StaticClass();
+	// 언리얼 배열 사용해보기 
+	TArray<UPerson*> Persons = { NewObject<UStudent>(), NewObject<UTeacher>(), NewObject<UStaff>() };
 
-	// 어서트
-	// 1) check
-	check(ClassRuntime == ClassCompile);
-	// 2) ensure
-	ensure(ClassRuntime == ClassCompile);
-	ensureMsgf(ClassRuntime == ClassCompile, TEXT("일부러 발생시킨 오류"));
-
-	// 두 타입 비교 
-	FString Result = (ClassRuntime == ClassCompile) ? TEXT("같음") : TEXT("다름");
-
-	UE_LOG(LogTemp, Log, TEXT("클래스 비교 결과: %s"), *Result);
-	/*클래스 비교 결과: 같음*/
-
-	UE_LOG(LogTemp, Log, TEXT("학교를 담당하는 클래스 이름: %s"), *ClassRuntime->GetName());
-
-	// 값 출력
-	SchoolName = TEXT("포텐업");
-	UE_LOG(LogTemp, Log, TEXT("학교 이름: %s"), *SchoolName);
-	UE_LOG(LogTemp, Log, TEXT("학교 이름 기본값: %s"), *GetClass()->GetDefaultObject<UMyGameInstance>()->SchoolName);
-
-	/// 출력 결과
-	/*
-	LogTemp: 클래스 비교 결과: 같음
-	LogTemp: 학교를 담당하는 클래스 이름: MyGameInstance
-	LogTemp: 학교 이름: 포텐업
-	LogTemp: 학교 이름 기본값: 기본 학교 이름
-	*/
-
-	UE_LOG(LogTemp, Log, TEXT("====================================="))
-
-	// 학생 선생님 객체 생성
-	UStudent* Student = NewObject<UStudent>();
-	UTeacher* Teacher = NewObject<UTeacher>();
-
-	// 프로그래머가 정의한 GET SET 사용
-	Student->SetName(TEXT("학생1"));
-	UE_LOG(LogTemp, Log, TEXT("새로운 학생 이름: %s"), *Student->GetName());
-
-	// 언리얼 리플렉션을 통한 프로퍼티 사용
-	FString CurrentTeacherName;
-	FString NewTeacherName(TEXT("존카멕"));
-	// Name 프로퍼티 변수 가져오기
-	FProperty* NameProperty = UTeacher::StaticClass()->FindPropertyByName(TEXT("Name"));
-
-	if (NameProperty /* != nullptr*/)
+	for (const auto Person : Persons)
 	{
-		NameProperty->GetValue_InContainer(Teacher, &CurrentTeacherName);
+		ILessonInterface* LessonInterface = Cast<ILessonInterface>(Person);
 
-		UE_LOG(LogTemp, Log, TEXT("현재 선생님 이름: %s"), *CurrentTeacherName);
-
-		NameProperty->SetValue_InContainer(Teacher, &NewTeacherName);
-
-		UE_LOG(LogTemp, Log, TEXT("새로운 선생님 이름: %s"), *Teacher->GetName());
+		if (LessonInterface)
+		{
+			UE_LOG(LogTemp, Log, TEXT("> %s님 수업에 입장하셨습니다."), *Person->GetName())
+			LessonInterface->DoLesson();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("> %s님 은 수업에 참여할 수 없습니다."), *Person->GetName())
+		}
 	}
-
-	/// 출력 결과
-	/*
-	LogTemp: 새로운 학생 이름: 학생1
-	LogTemp: 현재 선생님 이름: 장세윤
-	LogTemp: 새로운 선생님 이름: 존카멕
-	*/
-
-	UE_LOG(LogTemp, Log, TEXT("====================================="))
-
 
 	UE_LOG(LogTemp, Log, TEXT("====================================="))
 }

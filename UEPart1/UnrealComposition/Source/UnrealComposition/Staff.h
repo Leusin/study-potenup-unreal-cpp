@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UNREALINTERFACE_API UStaff : public UPerson
+class UNREALCOMPOSITION_API UStaff : public UPerson
 {
 	GENERATED_BODY()
 	

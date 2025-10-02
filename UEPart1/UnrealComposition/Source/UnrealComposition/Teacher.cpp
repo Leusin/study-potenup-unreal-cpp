@@ -2,11 +2,14 @@
 
 
 #include "Teacher.h"
+#include "Card.h"
 
 UTeacher::UTeacher()
 {
 	Name = TEXT("장세윤");
 	Year = 14;
+	
+	Card->SetCardType(ECardType::Teacher);
 }
 
 void UTeacher::DoLesson()
