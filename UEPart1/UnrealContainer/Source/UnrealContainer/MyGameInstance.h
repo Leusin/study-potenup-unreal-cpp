@@ -24,6 +24,20 @@ struct FStudentData
 
 	}
 
+	// TSet 구조체를 위한 ==(동등 비교 연산자) 함수
+	// 이항 연산자이기 때문에 피연산자 2개 필요로. 
+	// friend 키워드가 없다면 피연산자를 자신 타입으로 암묵적 판단 
+	bool operator==(const FStudentData& InOther) const
+	{
+		return Order == InOther.Order;
+	}
+
+	friend FORCEINLINE int32 GetTypeHash(const FStudentData& InStudentData)
+	{
+		//return GetTypeHash(InStudentData.Order);
+		return GetTypeHash(InStudentData.Name);
+	}
+
 public:
 	UPROPERTY()
 	FString Name;
@@ -43,11 +57,19 @@ class UNREALCONTAINER_API UMyGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
+	virtual void Shutdown() override;
+
 private:
-	TArray<FStudentData> StudentsData;
+
+	TObjectPtr<class UStudent> NonPropStudent;
 
 	UPROPERTY()
-	TArray<TObjectPtr<class UStudent>> Students;
+	TObjectPtr<class UStudent> PropStudent;
 
-	TMap<int32, FString> StudentsMap;
+	//TArray<FStudentData> StudentsData;
+
+	//UPROPERTY()
+	//TArray<TObjectPtr<class UStudent>> Students;
+
+	//TMap<int32, FString> StudentsMap;
 };
