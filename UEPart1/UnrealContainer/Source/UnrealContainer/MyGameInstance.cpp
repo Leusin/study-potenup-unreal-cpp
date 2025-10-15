@@ -4,6 +4,7 @@
 #include "MyGameInstance.h"
 #include "Student.h"
 #include "Algo/Accumulate.h"
+#include "StudentManager.h"
 
 // 랜덤으로 이름 만드는 함수
 static FString MakeRandomName()
@@ -57,6 +58,12 @@ void UMyGameInstance::Init()
 	// 객체 생성
 	NonPropStudent = NewObject<UStudent>();
 	PropStudent = NewObject<UStudent>();
+
+	
+	NonPropStudents.Add(NonPropStudent);
+	PropStudents.Add(PropStudent);
+
+	StudentManager = new FStudentManager(NewObject<UStudent>());
 
 	//const int32 ArrayNum = 10;
 	//TArray<int32> Int32Array;
@@ -217,6 +224,20 @@ void UMyGameInstance::Shutdown()
 {
 	Super::Shutdown();
 
+	const UStudent* StudentInManager = StudentManager->GetStudent();
+
+	delete StudentManager;
+	StudentManager = nullptr;
+
+	CheckUObjectIsValid(StudentInManager, TEXT("StudentInManager"));
+	CheckUObjectIsNull(StudentInManager, TEXT("StudentInManager"));
+
+	/*
+	LogTemp: [StudentInManager] 유효함
+	LogTemp: [StudentInManager] 널 아님
+	*/
+
+
 	// 유효성 확인
 	CheckUObjectIsValid(NonPropStudent, TEXT("NonPropStudent"));
 	CheckUObjectIsNull(NonPropStudent, TEXT("NonPropStudent"));
@@ -235,4 +256,9 @@ void UMyGameInstance::Shutdown()
 	LogTemp: [PropStudent] 유효함
 	LogTemp: [PropStudent] 널 아님
 	*/
+
+	CheckUObjectIsValid(NonPropStudents[0], TEXT("NonPropStudents"));
+	CheckUObjectIsNull(NonPropStudents[0], TEXT("NonPropStudents"));
+	CheckUObjectIsValid(PropStudents[0], TEXT("PropStudents"));
+	CheckUObjectIsNull(PropStudents[0], TEXT("PropStudents"));
 }

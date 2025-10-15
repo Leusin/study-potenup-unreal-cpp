@@ -66,6 +66,14 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UStudent> PropStudent;
 
+	TArray<TObjectPtr<class UStudent>> NonPropStudents;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class UStudent>> PropStudents;
+
+	// 일반 클래스
+	class FStudentManager* StudentManager = nullptr;
+
 	//TArray<FStudentData> StudentsData;
 
 	//UPROPERTY()
