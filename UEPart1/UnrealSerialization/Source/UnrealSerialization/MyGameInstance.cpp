@@ -3,6 +3,7 @@
 
 #include "MyGameInstance.h"
 #include "Student.h"
+#include "JsonObjectConverter.h"
 
 UMyGameInstance::UMyGameInstance()
 {
@@ -131,13 +132,11 @@ void UMyGameInstance::Init()
 
 		// File -> ByteArray -> UObject
 		TArray<uint8> BufferArrayFromFile;
-		TUniquePtr<FArchive> FileReader =
-			TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*ObjectDataAbsolutePath));
+		TUniquePtr<FArchive> FileReader = TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*ObjectDataAbsolutePath));
 
 		if (FileReader)
 		{
 			*FileReader << BufferArrayFromFile;
-
 			FileReader->Close();
 		}
 
@@ -150,5 +149,88 @@ void UMyGameInstance::Init()
 		/*
 		LogTemp: 이름: 장세윤, 순번: 13
 		*/
+	}
+
+	// Json 직렬화.
+	{
+		// 직렬화
+		// UObject > Json 문자열 > 파일에 저장.
+		const FString JsonDataFileName(TEXT("StudentJsonData.txt"));
+		// 경로 지정.
+		FString JsonDataAbsolutePath
+			= FPaths::Combine(*SavedPath, *JsonDataFileName);
+		// 경로 정리.
+		FPaths::MakeStandardFilename(JsonDataAbsolutePath);
+
+		// UObject > Json 문자열.
+		// UObject > JsonObject > JsonWriter > JsonString.
+
+		// 생성할 JsonObject 객체 생성.
+		TSharedRef<FJsonObject> JsonObjectSource
+			= MakeShared<FJsonObject>();
+
+		// JsonObject에 값 설정.
+		FJsonObjectConverter::UStructToJsonObject(
+			/*UStudent::StaticClass(),*/
+			StudentSource->GetClass(),
+			StudentSource,
+			JsonObjectSource
+		);
+
+		// Json 문자열.
+		FString JsonOutString;
+
+		// Json 으로 직렬화 처리를 위한 아카이브 생성.
+		auto JsonWriter
+			= TJsonWriterFactory<TCHAR>::Create(&JsonOutString);
+
+		// 아카이브를 활용해 Json 문자열 생성.
+		if (FJsonSerializer::Serialize(JsonObjectSource, JsonWriter))
+		{
+			// Json 문자열이 문제 없이 생성되면 파일로 저장.
+			if (FFileHelper::SaveStringToFile(
+				JsonOutString, *JsonDataAbsolutePath))
+			{
+				UE_LOG(LogTemp, Log, TEXT("Json 직렬화에 성공했습니다."));
+			}
+		}
+
+		// 역직렬화.
+		// File > JsonString > JsonReader > UObject
+		FString JsonInString;
+		if (!FFileHelper::LoadFileToString(JsonInString, *JsonDataAbsolutePath))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Json 데이터 파일 읽기에 실패했습니다."));
+			return;
+		}
+
+		// JsonReader 생성.
+		TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(JsonInString);
+
+		// JsonObject 생성.
+		TSharedPtr<FJsonObject> JsonObjectDest;
+
+		// 역직렬화 진행.
+		if (FJsonSerializer::Deserialize(JsonReader, JsonObjectDest))
+		{
+			// 테스트할 UObject.
+			UStudent* JsonStudentDest = NewObject<UStudent>();
+			if (FJsonObjectConverter::JsonObjectToUStruct(
+				JsonObjectDest.ToSharedRef(),
+				JsonStudentDest->GetClass(),
+				JsonStudentDest
+			))
+			{
+				// 불러온 데이터 출력.
+				UE_LOG(
+					LogTemp,
+					Log,
+					TEXT("[JsonData] 이름: %s, 순번: %d"),
+					*JsonStudentDest->GetName(),
+					JsonStudentDest->GetOrder()
+				);
+			}
+		}
+
 	}
 }
