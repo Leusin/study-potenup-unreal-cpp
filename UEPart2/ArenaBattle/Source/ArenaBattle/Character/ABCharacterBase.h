@@ -6,6 +6,14 @@
 #include "GameFramework/Character.h"
 #include "ABCharacterBase.generated.h"
 
+// 캐릭터 타입 열거형
+UENUM()
+enum class ECharacterControlType : uint8
+{
+	Shoulder, 
+	Quater
+};
+
 UCLASS()
 class ARENABATTLE_API AABCharacterBase : public ACharacter
 {
@@ -16,14 +24,11 @@ public:
 	AABCharacterBase();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	// 컨트롤 데이터 설정
+	virtual void SetCharacterControlData(const class UABCharacterControlData* InCharacterControlData);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+protected:
+	// 열거형 타입
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TMap<ECharacterControlType, class UABCharacterControlData*> CharacterControlManager;
 };
