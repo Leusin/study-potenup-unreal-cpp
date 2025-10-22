@@ -32,14 +32,15 @@ AABCharacterPlayer::AABCharacterPlayer()
 
 	// 메시 컴포넌트 설정.
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
+	
 	// 애셋 지정.
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Barbarous.SK_CharM_Barbarous"));
 	if (CharacterMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(CharacterMesh.Object);
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> CharaterAnim(TEXT("/Game/Characters/Mannequins/Anims/Unarmed/ABP_Unarmed.ABP_Unarmed_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> CharaterAnim(TEXT("/Game/ArenaBattle/Animation/ABP_ABCharacter.ABP_ABCharacter_C"));
 	if (CharaterAnim.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(CharaterAnim.Class);
@@ -106,7 +107,7 @@ AABCharacterPlayer::AABCharacterPlayer()
 	}
 
 	// 초기 캐릭터 컨트롤 타입 설정
-	CurrentCharacterControlType = ECharacterControlType::Quater;
+	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 }
 
 void AABCharacterPlayer::BeginPlay()
@@ -141,6 +142,7 @@ void AABCharacterPlayer::SetCharacterControl(ECharacterControlType NewCharacterC
 {
 	// 변경할 컨트롤 데이터 에셋 로드
 	UABCharacterControlData* NewCharacterControl = CharacterControlManager[NewCharacterControlType];
+	check(NewCharacterControl);
 
 	// 데이터 에셋을 전달해 함수 호출
 	SetCharacterControlData(NewCharacterControl);
